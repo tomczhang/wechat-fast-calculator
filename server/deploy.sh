@@ -3,7 +3,7 @@ set -e
 
 DOMAIN=${1:?"用法: bash deploy.sh api.tommiao.com"}
 REPO="https://github.com/tomczhang/wechat-fast-calculator.git"
-APP_DIR="/opt/wechat-api"
+BASE_DIR="/root/wechat-fast-calculator"
 
 echo "=== 1. 安装 Node.js 20 ==="
 if ! command -v node &>/dev/null; then
@@ -17,17 +17,17 @@ sudo npm install -g pm2
 sudo apt-get install -y git
 
 echo "=== 3. 克隆/更新代码 ==="
-if [ -d "$APP_DIR/.git" ]; then
-  cd "$APP_DIR"
+if [ -d "$BASE_DIR/.git" ]; then
+  cd "$BASE_DIR"
   git pull
 else
-  sudo git clone "$REPO" "$APP_DIR"
+  git clone "$REPO" "$BASE_DIR"
 fi
-cd "$APP_DIR/server"
+cd "$BASE_DIR/server"
 
 echo "=== 4. 检查 .env ==="
 if [ ! -f .env ]; then
-  echo "!! 请先创建 $APP_DIR/server/.env 填写 API 密钥 !!"
+  echo "!! 请先创建 $BASE_DIR/server/.env 填写 API 密钥 !!"
   echo "!! 参考 .env.example !!"
   exit 1
 fi
@@ -73,5 +73,5 @@ echo "=== 部署完成 ==="
 echo "API: https://$DOMAIN"
 echo "测试: curl https://$DOMAIN/api/health"
 echo ""
-echo "后续更新只需:"
-echo "  cd $APP_DIR && git pull && cd server && npm install --omit=dev && pm2 restart wechat-api"
+echo "后续更新:"
+echo "  cd $BASE_DIR && git pull && cd server && npm install --omit=dev && pm2 restart wechat-api"
