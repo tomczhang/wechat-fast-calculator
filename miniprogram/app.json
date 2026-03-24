@@ -1,0 +1,36 @@
+{
+  "pages": [
+    "pages/home/home",
+    "pages/index/index",
+    "pages/stocks/stocks"
+  ],
+  "window": {
+    "navigationBarTitleText": "美股宽指计算器",
+    "navigationBarBackgroundColor": "#FFFFFF",
+    "navigationBarTextStyle": "black",
+    "backgroundColor": "#F4F5F7",
+    "backgroundTextStyle": "dark",
+    "enablePullDownRefresh": false
+  },
+  "tabBar": {
+    "color": "#8E8E93",
+    "selectedColor": "#000000",
+    "backgroundColor": "#FFFFFF",
+    "borderStyle": "white",
+    "list": [
+      {
+        "pagePath": "pages/home/home",
+        "text": "总览"
+      },
+      {
+        "pagePath": "pages/index/index",
+        "text": "宽指"
+      },
+      {
+        "pagePath": "pages/stocks/stocks",
+        "text": "个股"
+      }
+    ]
+  },
+  "sitemapLocation": "sitemap.json"
+}

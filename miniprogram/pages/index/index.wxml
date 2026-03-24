@@ -1,0 +1,121 @@
+<view class="container">
+  <!-- 加载状态 -->
+  <view class="loading-wrap" wx:if="{{loading && !data}}">
+    <view class="spinner"></view>
+    <text class="loading-text">获取行情数据...</text>
+  </view>
+
+  <!-- 错误状态 -->
+  <view class="error-wrap" wx:elif="{{error && !data}}">
+    <text class="error-icon">⚠</text>
+    <text class="error-text">{{error}}</text>
+    <view class="btn-refresh" bindtap="onRefresh">重试</view>
+  </view>
+
+  <!-- 数据展示 -->
+  <block wx:elif="{{data}}">
+    <!-- Hero 区域 -->
+    <view class="hero">
+      <text class="hero-label">组合总跌幅 Portfolio Drawdown</text>
+      <view class="hero-number {{dropClass}}">
+        <text class="hero-sign">{{dropSign}}</text>
+        <text class="hero-integer">{{dropInteger}}</text>
+        <text class="hero-decimal">.{{dropDecimal}}%</text>
+      </view>
+
+      <!-- 标尺 -->
+      <view class="ruler-container">
+        <view class="ruler"></view>
+        <view class="ruler-needle" style="left: {{needlePos}}%">
+          <view class="ruler-needle-dot"></view>
+        </view>
+      </view>
+
+      <!-- 前高 → 现值 -->
+      <view class="hero-meta">
+        <view class="meta-group">
+          <text class="meta-label">前高 → 现值 Peak to Current</text>
+          <view class="meta-values">
+            <text class="meta-value">${{data.prevHigh}}</text>
+            <text class="meta-arrow">→</text>
+            <text class="meta-value">${{data.currentTotal}}</text>
+          </view>
+        </view>
+        <view class="allocation-badge">
+          <text>VOO 70%</text>
+          <view class="badge-dot"></view>
+          <text>QQQ 30%</text>
+        </view>
+      </view>
+    </view>
+
+    <!-- 卡片区域 -->
+    <view class="details-section">
+      <!-- VOO 卡片 -->
+      <view class="etf-card">
+        <view class="card-header">
+          <view class="ticker-group">
+            <text class="ticker">VOO</text>
+            <text class="etf-name">Vanguard S&P 500 ETF</text>
+          </view>
+          <view class="card-drawdown {{data.voo.dropFromHigh >= 0 ? 'dd-green' : (data.voo.dropFromHigh > -10 ? 'dd-orange' : 'dd-red')}}">
+            <text>{{data.voo.dropFromHigh}}%</text>
+          </view>
+        </view>
+        <view class="card-data-grid">
+          <view class="data-point">
+            <text class="dp-label">6月最高 Peak</text>
+            <text class="dp-value">${{data.voo.highPrice}}</text>
+          </view>
+          <view class="data-point">
+            <text class="dp-label">最高日期 Date</text>
+            <text class="dp-value">{{data.voo.highDate}}</text>
+          </view>
+          <view class="data-point-full">
+            <text class="dp-label">当前价格 Current</text>
+            <text class="dp-value-large">${{data.voo.currentPrice}}</text>
+          </view>
+        </view>
+      </view>
+
+      <!-- QQQ 卡片 -->
+      <view class="etf-card">
+        <view class="card-header">
+          <view class="ticker-group">
+            <text class="ticker">QQQ</text>
+            <text class="etf-name">Invesco QQQ Trust</text>
+          </view>
+          <view class="card-drawdown {{data.qqq.dropFromHigh >= 0 ? 'dd-green' : (data.qqq.dropFromHigh > -10 ? 'dd-orange' : 'dd-red')}}">
+            <text>{{data.qqq.dropFromHigh}}%</text>
+          </view>
+        </view>
+        <view class="card-data-grid">
+          <view class="data-point">
+            <text class="dp-label">6月最高 Peak</text>
+            <text class="dp-value">${{data.qqq.highPrice}}</text>
+          </view>
+          <view class="data-point">
+            <text class="dp-label">最高日期 Date</text>
+            <text class="dp-value">{{data.qqq.highDate}}</text>
+          </view>
+          <view class="data-point-full">
+            <text class="dp-label">当前价格 Current</text>
+            <text class="dp-value-large">${{data.qqq.currentPrice}}</text>
+          </view>
+        </view>
+      </view>
+
+      <!-- 底部 -->
+      <view class="footer">
+        <view class="update-time" wx:if="{{updateTime}}">
+          <view class="update-dot"></view>
+          <text>数据更新于 {{updateTime}}</text>
+        </view>
+        <view class="btn-refresh" bindtap="onRefresh">
+          <text wx:if="{{loading}}">刷新中...</text>
+          <text wx:else>刷新数据</text>
+        </view>
+      </view>
+    </view>
+  </block>
+</view>

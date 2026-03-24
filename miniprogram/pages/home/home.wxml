@@ -1,0 +1,56 @@
+<view class="container">
+  <!-- 标题区域 -->
+  <view class="header">
+    <text class="header-title">跌幅总览</text>
+    <text class="header-sub">Drawdown Overview</text>
+  </view>
+
+  <!-- 加载进度 -->
+  <view class="loading-bar" wx:if="{{loading}}">
+    <view class="spinner-sm"></view>
+    <text class="loading-text">{{progress ? '加载中 ' + progress : '获取数据...'}}</text>
+  </view>
+
+  <!-- 错误 -->
+  <view class="error-wrap" wx:if="{{error && !items.length}}">
+    <text class="error-text">{{error}}</text>
+    <view class="btn-refresh" bindtap="onRefresh">重试</view>
+  </view>
+
+  <!-- 列表 -->
+  <view class="list-section" wx:if="{{items.length}}">
+    <view
+      class="list-item"
+      wx:for="{{items}}"
+      wx:key="ticker"
+      data-type="{{item.type}}"
+      bindtap="onItemTap"
+    >
+      <view class="item-left">
+        <view class="item-rank">{{index + 1}}</view>
+        <view class="item-info">
+          <text class="item-ticker">{{item.ticker}}</text>
+          <text class="item-name">{{item.nameCN}}</text>
+        </view>
+      </view>
+      <view class="item-right">
+        <text class="item-price">${{item.currentPrice}}</text>
+        <view class="item-badge {{item.dropClass}}">
+          <text>{{item.dropFromHigh}}%</text>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 底部 -->
+  <view class="footer" wx:if="{{items.length}}">
+    <view class="update-time" wx:if="{{updateTime}}">
+      <view class="update-dot"></view>
+      <text>{{updateTime}} 更新</text>
+    </view>
+    <view class="btn-refresh" bindtap="onRefresh">
+      <text wx:if="{{loading}}">刷新中...</text>
+      <text wx:else>刷新</text>
+    </view>
+  </view>
+</view>

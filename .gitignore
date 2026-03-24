@@ -1,0 +1,16 @@
+# 密钥
+.env
+miniprogram/.env
+
+# 依赖
+node_modules/
+server/node_modules/
+
+# IDE
+.cursor/
+
+# 微信开发者工具
+project.private.config.json
+
+# OS
+.DS_Store
