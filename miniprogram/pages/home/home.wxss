@@ -2,13 +2,13 @@
   display: flex;
   flex-direction: column;
   min-height: 100vh;
-  background-color: #FFFFFF;
+  background-color: #F4F5F7;
 }
 
 /* ========== Header ========== */
-
 .header {
-  padding: 24rpx 48rpx 16rpx;
+  padding: 24rpx 40rpx 16rpx;
+  background: #FFFFFF;
 }
 
 .header-title {
@@ -30,13 +30,12 @@
 }
 
 /* ========== Loading ========== */
-
 .loading-bar {
   display: flex;
   align-items: center;
   gap: 16rpx;
-  padding: 20rpx 48rpx;
-  background: #F9F9FB;
+  padding: 20rpx 40rpx;
+  background: #FFFFFF;
 }
 
 .spinner-sm {
@@ -59,7 +58,6 @@
 }
 
 /* ========== Error ========== */
-
 .error-wrap {
   display: flex;
   flex-direction: column;
@@ -73,37 +71,201 @@
   margin-bottom: 32rpx;
 }
 
-/* ========== List ========== */
-
-.list-section {
-  flex-grow: 1;
-  background: #F4F5F7;
-  border-radius: 48rpx 48rpx 0 0;
-  padding: 28rpx 28rpx 0;
-  box-shadow: 0 -10rpx 40rpx rgba(0,0,0,0.03);
+/* ========== Section ========== */
+.section {
+  padding: 24rpx 28rpx 0;
 }
 
-.list-item {
+.section-label {
+  font-size: 24rpx;
+  color: #8E8E93;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  margin-bottom: 16rpx;
+  padding-left: 8rpx;
+}
+
+/* ========== 宽指卡片 ========== */
+.index-cards {
+  display: flex;
+  flex-direction: column;
+  gap: 16rpx;
+}
+
+.index-card {
+  background: #FFFFFF;
+  border-radius: 24rpx;
+  padding: 28rpx;
+  border: 2rpx solid rgba(0, 0, 0, 0.06);
+}
+
+.index-card-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.index-card-left {
+  display: flex;
+  align-items: baseline;
+  gap: 12rpx;
+}
+
+.index-ticker {
+  font-size: 36rpx;
+  font-weight: 900;
+  letter-spacing: -0.03em;
+}
+
+.index-name {
+  font-size: 24rpx;
+  color: #8E8E93;
+  font-weight: 500;
+}
+
+.index-drop {
+  padding: 10rpx 20rpx;
+  border-radius: 12rpx;
+  font-size: 32rpx;
+  font-weight: 900;
+  letter-spacing: -0.02em;
+}
+
+.index-card-bottom {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 16rpx;
+  padding-top: 16rpx;
+  border-top: 1rpx solid rgba(0, 0, 0, 0.04);
+}
+
+.index-price {
+  font-size: 28rpx;
+  font-weight: 700;
+  color: #333;
+}
+
+/* ========== 击球点 ========== */
+.strike-badge {
+  display: flex;
+  align-items: center;
+  gap: 6rpx;
+  padding: 6rpx 16rpx;
+  border-radius: 8rpx;
+  font-size: 22rpx;
+  font-weight: 700;
+  background: rgba(255, 59, 48, 0.1);
+  color: #FF3B30;
+}
+
+.strike-icon {
+  font-size: 24rpx;
+}
+
+.strike-inactive {
+  background: rgba(142, 142, 147, 0.08);
+  color: #8E8E93;
+  font-weight: 500;
+}
+
+.strike-dot {
+  font-size: 28rpx;
+  color: #FF3B30;
+}
+
+/* ========== VIX 卡片 ========== */
+.vix-card {
+  background: #FFFFFF;
+  border-radius: 24rpx;
+  padding: 28rpx;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border: 2rpx solid rgba(0, 0, 0, 0.06);
+}
+
+.vix-left {
+  display: flex;
+  flex-direction: column;
+  gap: 6rpx;
+}
+
+.vix-value {
+  font-size: 48rpx;
+  font-weight: 900;
+  letter-spacing: -0.03em;
+}
+
+.vix-change {
+  font-size: 24rpx;
+  font-weight: 600;
+}
+
+.vix-up {
+  color: #FF3B30;
+}
+
+.vix-down {
+  color: #34C759;
+}
+
+/* ========== 恐慌等级 ========== */
+.panic-badge {
+  padding: 10rpx 24rpx;
+  border-radius: 12rpx;
+  font-size: 26rpx;
+  font-weight: 800;
+}
+
+.panic-normal {
+  background: rgba(52, 199, 89, 0.1);
+  color: #34C759;
+}
+
+.panic-elevated {
+  background: rgba(255, 149, 0, 0.1);
+  color: #FF9500;
+}
+
+.panic-high {
+  background: rgba(255, 59, 48, 0.1);
+  color: #FF3B30;
+}
+
+.panic-extreme {
+  background: rgba(175, 0, 0, 0.15);
+  color: #AF0000;
+}
+
+/* ========== 个股列表 ========== */
+.stock-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12rpx;
+}
+
+.stock-item {
   display: flex;
   justify-content: space-between;
   align-items: center;
   background: #FFFFFF;
-  border-radius: 24rpx;
-  padding: 24rpx 28rpx;
-  margin-bottom: 16rpx;
-  border: 1rpx solid rgba(0,0,0,0.04);
+  border-radius: 20rpx;
+  padding: 22rpx 24rpx;
+  border: 1rpx solid rgba(0, 0, 0, 0.04);
 }
 
-.item-left {
+.stock-left {
   display: flex;
   align-items: center;
-  gap: 20rpx;
+  gap: 18rpx;
 }
 
-.item-rank {
-  width: 44rpx;
-  height: 44rpx;
-  border-radius: 12rpx;
+.stock-rank {
+  width: 40rpx;
+  height: 40rpx;
+  border-radius: 10rpx;
   background: #F0F0F0;
   display: flex;
   align-items: center;
@@ -113,43 +275,43 @@
   color: #8E8E93;
 }
 
-.item-info {
+.stock-info {
   display: flex;
   flex-direction: column;
-  gap: 4rpx;
+  gap: 2rpx;
 }
 
-.item-ticker {
-  font-size: 30rpx;
+.stock-ticker {
+  font-size: 28rpx;
   font-weight: 800;
   letter-spacing: -0.02em;
 }
 
-.item-name {
-  font-size: 22rpx;
+.stock-name {
+  font-size: 20rpx;
   color: #8E8E93;
   font-weight: 500;
 }
 
-.item-right {
+.stock-right {
   display: flex;
   align-items: center;
-  gap: 16rpx;
+  gap: 14rpx;
 }
 
-.item-price {
+.stock-price {
   font-size: 24rpx;
   color: #8E8E93;
   font-weight: 500;
 }
 
-.item-badge {
+.stock-badge {
   padding: 8rpx 16rpx;
   border-radius: 10rpx;
-  font-size: 26rpx;
+  font-size: 24rpx;
   font-weight: 800;
   letter-spacing: -0.02em;
-  min-width: 120rpx;
+  min-width: 110rpx;
   text-align: center;
 }
 
@@ -158,13 +320,11 @@
 .dd-green { background: rgba(52, 199, 89, 0.08); color: #34C759; }
 
 /* ========== Footer ========== */
-
 .footer {
   display: flex;
   justify-content: space-between;
   align-items: center;
   padding: 28rpx 40rpx 56rpx;
-  background: #F4F5F7;
 }
 
 .update-time {

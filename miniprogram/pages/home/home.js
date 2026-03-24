@@ -1,17 +1,46 @@
 var stock = require("../../utils/stock");
 
+var INDEX_TICKERS = ["VOO", "QQQ"];
+var STOCK_TICKERS = ["AAPL", "MSFT", "GOOGL", "AMZN", "NVDA", "META", "TSLA", "TSM"];
+
+var STRIKE_ZONE = {
+  VOO: -6.5,
+  QQQ: -9,
+  _stock: -30,
+};
+
+var PANIC_LABELS = {
+  normal: "",
+  elevated: "一般恐慌",
+  high: "中等恐慌",
+  extreme: "特别恐慌",
+};
+
+var PANIC_CLASSES = {
+  normal: "panic-normal",
+  elevated: "panic-elevated",
+  high: "panic-high",
+  extreme: "panic-extreme",
+};
+
 function dropClass(val) {
   if (val >= 0) return "dd-green";
   if (val > -10) return "dd-orange";
   return "dd-red";
 }
 
+function isStrikeZone(ticker, drop) {
+  var threshold = STRIKE_ZONE[ticker] || STRIKE_ZONE._stock;
+  return drop <= threshold;
+}
+
 Page({
   data: {
     loading: false,
-    progress: "",
     error: null,
-    items: [],
+    indexes: [],
+    vix: null,
+    stocks: [],
     updateTime: "",
   },
 
@@ -32,36 +61,71 @@ Page({
 
   fetchAll: function () {
     var that = this;
-    that.setData({ loading: true, error: null, progress: "0/" + stock.ALL_TICKERS.length });
+    that.setData({ loading: true, error: null });
 
-    return stock
-      .getMultipleDrawdowns(stock.ALL_TICKERS, function (loaded, total) {
-        that.setData({ progress: loaded + "/" + total });
-      })
-      .then(function (result) {
-        if (!result.success) {
+    var allTickers = INDEX_TICKERS.concat(STOCK_TICKERS);
+    var p1 = stock.getMultipleDrawdowns(allTickers);
+    var p2 = stock.getVix();
+
+    return Promise.all([p1, p2])
+      .then(function (results) {
+        var drawdownResult = results[0];
+        var vixResult = results[1];
+
+        if (!drawdownResult.success) {
           that.setData({ loading: false, error: "数据加载失败" });
           return;
         }
 
-        var list = [];
-        stock.ALL_TICKERS.forEach(function (t) {
-          var d = result.data[t];
+        var indexes = [];
+        INDEX_TICKERS.forEach(function (t) {
+          var d = drawdownResult.data[t];
           if (d && !d.error) {
-            list.push({
+            indexes.push({
               ticker: d.ticker,
               nameCN: d.nameCN,
+              currentPrice: d.currentPrice,
               dropFromHigh: d.dropFromHigh,
               dropClass: dropClass(d.dropFromHigh),
-              currentPrice: d.currentPrice,
-              type: t === "VOO" || t === "QQQ" ? "index" : "stock",
+              strikeZone: isStrikeZone(t, d.dropFromHigh),
+              threshold: STRIKE_ZONE[t],
             });
           }
         });
 
-        list.sort(function (a, b) {
+        var stocks = [];
+        STOCK_TICKERS.forEach(function (t) {
+          var d = drawdownResult.data[t];
+          if (d && !d.error) {
+            stocks.push({
+              ticker: d.ticker,
+              nameCN: d.nameCN,
+              currentPrice: d.currentPrice,
+              dropFromHigh: d.dropFromHigh,
+              dropClass: dropClass(d.dropFromHigh),
+              strikeZone: isStrikeZone(t, d.dropFromHigh),
+            });
+          }
+        });
+
+        stocks.sort(function (a, b) {
           return a.dropFromHigh - b.dropFromHigh;
         });
+
+        var vix = null;
+        if (vixResult && vixResult.success) {
+          var v = vixResult.data;
+          vix = {
+            value: v.value,
+            change: v.change,
+            changePercent: v.changePercent,
+            panicLevel: v.panicLevel,
+            panicLabel: PANIC_LABELS[v.panicLevel] || "",
+            panicClass: PANIC_CLASSES[v.panicLevel] || "panic-normal",
+            changeClass: v.change >= 0 ? "vix-up" : "vix-down",
+            changeSign: v.change >= 0 ? "+" : "",
+          };
+        }
 
         var now = new Date();
         var h = String(now.getHours()).padStart(2, "0");
@@ -70,16 +134,14 @@ Page({
 
         that.setData({
           loading: false,
-          items: list,
+          indexes: indexes,
+          vix: vix,
+          stocks: stocks,
           updateTime: h + ":" + m + ":" + s,
-          progress: "",
         });
       })
       .catch(function (err) {
-        that.setData({
-          loading: false,
-          error: err.message || "网络错误",
-        });
+        that.setData({ loading: false, error: err.message || "网络错误" });
       });
   },
 

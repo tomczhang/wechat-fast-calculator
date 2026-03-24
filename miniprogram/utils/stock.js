@@ -62,9 +62,14 @@ function getIndexDrop(onBatchDone) {
   });
 }
 
+function getVix() {
+  return request("/api/vix");
+}
+
 module.exports = {
   getIndexDrop: getIndexDrop,
   getMultipleDrawdowns: getMultipleDrawdowns,
+  getVix: getVix,
   ALL_TICKERS: ALL_TICKERS,
   STOCK_NAMES: STOCK_NAMES,
   STOCK_NAMES_EN: STOCK_NAMES_EN,

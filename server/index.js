@@ -135,6 +135,34 @@ function calcDrawdown(ticker, bars, quote) {
   };
 }
 
+// ---- VIX (Yahoo Finance) ----
+const vixCache = { data: null, ts: 0 };
+
+async function fetchVix() {
+  const now = Date.now();
+  if (vixCache.data && now - vixCache.ts < QUOTE_TTL) return vixCache.data;
+  const url = "https://query1.finance.yahoo.com/v8/finance/chart/%5EVIX?interval=1d&range=5d";
+  const res = await fetch(url, { headers: { "User-Agent": "Mozilla/5.0" } });
+  if (!res.ok) throw new Error(`Yahoo ${res.status}`);
+  const json = await res.json();
+  const result = json.chart?.result?.[0];
+  if (!result) throw new Error("VIX 数据解析失败");
+  const closes = result.indicators.quote[0].close.filter((c) => c !== null);
+  if (closes.length < 2) throw new Error("VIX 数据不足");
+  const value = Math.round(closes[closes.length - 1] * 100) / 100;
+  const prevClose = Math.round(closes[closes.length - 2] * 100) / 100;
+  const change = Math.round((value - prevClose) * 100) / 100;
+  const changePercent = Math.round(((value - prevClose) / prevClose) * 100 * 100) / 100;
+  let panicLevel = "normal";
+  if (value >= 50) panicLevel = "extreme";
+  else if (value >= 40) panicLevel = "high";
+  else if (value >= 30) panicLevel = "elevated";
+  const data = { value, prevClose, change, changePercent, panicLevel };
+  vixCache.data = data;
+  vixCache.ts = now;
+  return data;
+}
+
 // ---- 预热缓存 ----
 async function warmCache() {
   console.log("[Warm] fetching bars...");
@@ -171,6 +199,15 @@ app.get("/api/drawdowns", async (c) => {
     }
   }
   return c.json({ success: true, data });
+});
+
+app.get("/api/vix", async (c) => {
+  try {
+    const data = await fetchVix();
+    return c.json({ success: true, data });
+  } catch (e) {
+    return c.json({ success: false, error: e.message });
+  }
 });
 
 app.get("/api/index-drop", async (c) => {
