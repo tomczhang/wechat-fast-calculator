@@ -3,7 +3,7 @@ set -e
 
 DOMAIN=${1:?"用法: bash deploy.sh api.tommiao.com"}
 REPO="https://github.com/tomczhang/wechat-fast-calculator.git"
-BASE_DIR="/root/wechat-fast-calculator"
+BASE_DIR="/root/git/wechat-fast-calculator"
 
 echo "=== 1. 安装 Node.js 20 ==="
 if ! command -v node &>/dev/null; then

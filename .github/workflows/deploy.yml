@@ -17,7 +17,7 @@ jobs:
           username: root
           key: ${{ secrets.SERVER_SSH_KEY }}
           script: |
-            cd /root/wechat-fast-calculator
+            cd /root/git/wechat-fast-calculator
             git pull origin main
             cd server
             npm install --omit=dev
