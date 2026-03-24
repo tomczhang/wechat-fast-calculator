@@ -3,25 +3,24 @@ var stock = require("../../utils/stock");
 var INDEX_TICKERS = ["VOO", "QQQ"];
 var STOCK_TICKERS = ["AAPL", "MSFT", "GOOGL", "AMZN", "NVDA", "META", "TSLA", "TSM"];
 
-var STRIKE_ZONE = {
-  VOO: -6.5,
-  QQQ: -9,
-  _stock: -30,
-};
+var STRIKE_ZONE = { VOO: -6.5, QQQ: -9, _stock: -30 };
 
-var PANIC_LABELS = {
-  normal: "",
-  elevated: "一般恐慌",
-  high: "中等恐慌",
-  extreme: "特别恐慌",
-};
+var PANIC_LABELS = { normal: "正常", elevated: "一般恐慌", high: "中等恐慌", extreme: "特别恐慌" };
+var PANIC_CLASSES = { normal: "panic-normal", elevated: "panic-elevated", high: "panic-high", extreme: "panic-extreme" };
 
-var PANIC_CLASSES = {
-  normal: "panic-normal",
-  elevated: "panic-elevated",
-  high: "panic-high",
-  extreme: "panic-extreme",
-};
+var ECG_PATTERN = [2, 2, 3, 5, 3, 2, 2, 24, 2, 2, 2, 4, 7, 4, 2, 2, 2, 2, 2, 2];
+var ECG_SCALES = { normal: 1, elevated: 1.5, high: 2.2, extreme: 3 };
+var ECG_SPEED = { normal: "ecg-slow", elevated: "ecg-medium", high: "ecg-fast", extreme: "ecg-fastest" };
+
+function makeEcgBars(panicLevel) {
+  var scale = ECG_SCALES[panicLevel] || 1;
+  var bars = [];
+  for (var i = 0; i < ECG_PATTERN.length; i++) {
+    var h = ECG_PATTERN[i];
+    bars.push({ h: Math.max(4, Math.round(h * scale)), d: i * 80 });
+  }
+  return bars;
+}
 
 function dropClass(val) {
   if (val >= 0) return "dd-green";
@@ -85,6 +84,8 @@ Page({
               ticker: d.ticker,
               nameCN: d.nameCN,
               currentPrice: d.currentPrice,
+              highPrice: d.highPrice,
+              highDate: d.highDate,
               dropFromHigh: d.dropFromHigh,
               dropClass: dropClass(d.dropFromHigh),
               strikeZone: isStrikeZone(t, d.dropFromHigh),
@@ -101,6 +102,8 @@ Page({
               ticker: d.ticker,
               nameCN: d.nameCN,
               currentPrice: d.currentPrice,
+              highPrice: d.highPrice,
+              highDate: d.highDate,
               dropFromHigh: d.dropFromHigh,
               dropClass: dropClass(d.dropFromHigh),
               strikeZone: isStrikeZone(t, d.dropFromHigh),
@@ -119,11 +122,12 @@ Page({
             value: v.value,
             change: v.change,
             changePercent: v.changePercent,
-            panicLevel: v.panicLevel,
-            panicLabel: PANIC_LABELS[v.panicLevel] || "",
+            panicLabel: PANIC_LABELS[v.panicLevel] || "正常",
             panicClass: PANIC_CLASSES[v.panicLevel] || "panic-normal",
             changeClass: v.change >= 0 ? "vix-up" : "vix-down",
             changeSign: v.change >= 0 ? "+" : "",
+            ecgBars: makeEcgBars(v.panicLevel),
+            ecgSpeed: ECG_SPEED[v.panicLevel] || "ecg-slow",
           };
         }
 

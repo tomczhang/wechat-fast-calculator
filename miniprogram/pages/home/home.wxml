@@ -1,7 +1,6 @@
 <view class="container">
   <view class="header">
-    <text class="header-title">跌幅总览</text>
-    <text class="header-sub">Drawdown Overview</text>
+    <text class="header-title">核心标的距近6个月前高总览</text>
   </view>
 
   <view class="loading-bar" wx:if="{{loading}}">
@@ -29,11 +28,23 @@
               <text>{{item.dropFromHigh}}%</text>
             </view>
           </view>
+          <view class="index-card-meta">
+            <view class="meta-row">
+              <text class="meta-label">现价</text>
+              <text class="meta-value">${{item.currentPrice}}</text>
+            </view>
+            <view class="meta-row">
+              <text class="meta-label">前高</text>
+              <text class="meta-value">${{item.highPrice}}</text>
+            </view>
+            <view class="meta-row">
+              <text class="meta-label">前高日期</text>
+              <text class="meta-value">{{item.highDate}}</text>
+            </view>
+          </view>
           <view class="index-card-bottom">
-            <text class="index-price">${{item.currentPrice}}</text>
-            <view class="strike-badge" wx:if="{{item.strikeZone}}">
-              <text class="strike-icon">&#x26BE;</text>
-              <text>击球点 ({{item.threshold}}%)</text>
+            <view class="strike-badge strike-active" wx:if="{{item.strikeZone}}">
+              <text>击球点已触发 ({{item.threshold}}%)</text>
             </view>
             <view class="strike-badge strike-inactive" wx:else>
               <text>击球点 {{item.threshold}}% 未触发</text>
@@ -46,17 +57,19 @@
     <!-- VIX 区域 -->
     <view class="section" wx:if="{{vix}}">
       <view class="section-label">VIX 恐慌指数</view>
-      <view class="vix-card">
-        <view class="vix-left">
-          <text class="vix-value">{{vix.value}}</text>
-          <text class="vix-change {{vix.changeClass}}">{{vix.changeSign}}{{vix.change}} ({{vix.changeSign}}{{vix.changePercent}}%)</text>
-        </view>
-        <view class="vix-right">
-          <view class="panic-badge {{vix.panicClass}}" wx:if="{{vix.panicLabel}}">
-            <text>{{vix.panicLabel}}</text>
+      <view class="vix-card {{vix.panicClass}}">
+        <view class="ecg-wrap {{vix.ecgSpeed}}">
+          <view class="ecg-bar" wx:for="{{vix.ecgBars}}" wx:key="index"
+            style="height: {{item.h}}rpx; animation-delay: {{item.d}}ms">
           </view>
-          <view class="panic-badge panic-normal" wx:else>
-            <text>正常</text>
+        </view>
+        <view class="vix-info">
+          <view class="vix-left">
+            <text class="vix-value">{{vix.value}}</text>
+            <text class="vix-change {{vix.changeClass}}">{{vix.changeSign}}{{vix.change}} ({{vix.changeSign}}{{vix.changePercent}}%)</text>
+          </view>
+          <view class="panic-tag {{vix.panicClass}}">
+            <text>{{vix.panicLabel}}</text>
           </view>
         </view>
       </view>
@@ -68,20 +81,24 @@
       <view class="stock-list">
         <view class="stock-item" wx:for="{{stocks}}" wx:key="ticker" data-type="stock" bindtap="onItemTap">
           <view class="stock-left">
-            <view class="stock-rank">{{index + 1}}</view>
+            <view class="stock-rank {{item.strikeZone ? 'rank-strike' : ''}}">{{index + 1}}</view>
             <view class="stock-info">
-              <text class="stock-ticker">{{item.ticker}}</text>
-              <text class="stock-name">{{item.nameCN}}</text>
+              <view class="stock-top-row">
+                <text class="stock-ticker">{{item.ticker}}</text>
+                <text class="stock-name">{{item.nameCN}}</text>
+                <view class="strike-tag" wx:if="{{item.strikeZone}}">
+                  <text>击球点</text>
+                </view>
+              </view>
+              <view class="stock-meta-row">
+                <text class="stock-meta">现价 ${{item.currentPrice}}</text>
+                <text class="stock-meta-sep">|</text>
+                <text class="stock-meta">前高 ${{item.highPrice}} ({{item.highDate}})</text>
+              </view>
             </view>
           </view>
-          <view class="stock-right">
-            <text class="stock-price">${{item.currentPrice}}</text>
-            <view class="stock-badge {{item.dropClass}}">
-              <text>{{item.dropFromHigh}}%</text>
-            </view>
-            <view class="strike-dot" wx:if="{{item.strikeZone}}">
-              <text>&#x26BE;</text>
-            </view>
+          <view class="stock-badge {{item.dropClass}}">
+            <text>{{item.dropFromHigh}}%</text>
           </view>
         </view>
       </view>

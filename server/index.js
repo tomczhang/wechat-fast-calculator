@@ -147,10 +147,18 @@ async function fetchVix() {
   const json = await res.json();
   const result = json.chart?.result?.[0];
   if (!result) throw new Error("VIX 数据解析失败");
-  const closes = result.indicators.quote[0].close.filter((c) => c !== null);
-  if (closes.length < 2) throw new Error("VIX 数据不足");
-  const value = Math.round(closes[closes.length - 1] * 100) / 100;
-  const prevClose = Math.round(closes[closes.length - 2] * 100) / 100;
+  const timestamps = result.timestamp;
+  const rawCloses = result.indicators.quote[0].close;
+  const byDate = {};
+  for (let i = 0; i < timestamps.length; i++) {
+    if (rawCloses[i] === null) continue;
+    const d = new Date(timestamps[i] * 1000).toISOString().slice(0, 10);
+    byDate[d] = rawCloses[i];
+  }
+  const dates = Object.keys(byDate).sort();
+  if (dates.length < 2) throw new Error("VIX 数据不足");
+  const value = Math.round(byDate[dates[dates.length - 1]] * 100) / 100;
+  const prevClose = Math.round(byDate[dates[dates.length - 2]] * 100) / 100;
   const change = Math.round((value - prevClose) * 100) / 100;
   const changePercent = Math.round(((value - prevClose) / prevClose) * 100 * 100) / 100;
   let panicLevel = "normal";
